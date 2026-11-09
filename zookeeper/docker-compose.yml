@@ -1,0 +1,90 @@
+# ZooKeeper (ensamble de 3 nodos) + ZooNavigator  [+ 2 brokers Kafka opcionales]
+#
+#   docker compose up -d                    -> solo ZooKeeper (zoo1, zoo2, zoo3) + UI
+#   docker compose --profile kafka up -d    -> además kafka1 y kafka2 usando este ZooKeeper
+#   ZooNavigator: http://localhost:9000   (Connection string: zoo1:2181,zoo2:2181,zoo3:2181)
+#
+# ¿Por qué 3 nodos?
+#   ZooKeeper funciona por QUÓRUM (mayoría). Con 3 nodos, la mayoría es 2:
+#   puede caer 1 nodo y el servicio sigue. Si caen 2, se detiene (no hay mayoría).
+#
+# Puertos de cada nodo (dentro de la red Docker):
+#   2181 -> clientes (nuestro código Node, Kafka, ZooNavigator)
+#   2888 -> los followers se conectan al líder (replicación)
+#   3888 -> elección de líder entre los nodos
+# Hacia tu computador se publican 2181, 2182 y 2183 (uno por nodo).
+#
+# Los nombres de contenedor llevan prefijo "zk-" para no chocar con el ejemplo kafka/.
+x-zk: &zk
+  image: zookeeper:3.8.4
+  restart: unless-stopped
+  environment: &zk-env
+    ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    ZOO_TICK_TIME: 2000            # 1 tick = 2 s (unidad de tiempo de ZooKeeper)
+    ZOO_INIT_LIMIT: 5              # ticks que tiene un follower para sincronizar al arrancar
+    ZOO_SYNC_LIMIT: 2              # ticks de atraso permitidos antes de sacar a un follower
+    ZOO_4LW_COMMANDS_WHITELIST: srvr,stat,mntr,ruok,cons   # comandos de diagnóstico (ensamble/estado.js)
+
+services:
+  zoo1:
+    <<: *zk
+    container_name: zk-zoo1
+    hostname: zoo1
+    ports: ['2181:2181']
+    environment: { <<: *zk-env, ZOO_MY_ID: 1 }
+
+  zoo2:
+    <<: *zk
+    container_name: zk-zoo2
+    hostname: zoo2
+    ports: ['2182:2181']
+    environment: { <<: *zk-env, ZOO_MY_ID: 2 }
+
+  zoo3:
+    <<: *zk
+    container_name: zk-zoo3
+    hostname: zoo3
+    ports: ['2183:2181']
+    environment: { <<: *zk-env, ZOO_MY_ID: 3 }
+
+  zoonavigator:
+    image: elkozmon/zoonavigator:1.1.3
+    container_name: zk-ui
+    ports: ['9000:9000']
+    environment:
+      HTTP_PORT: 9000
+      CONNECTION_LOCALZK_NAME: ensamble-local
+      CONNECTION_LOCALZK_CONN: zoo1:2181,zoo2:2181,zoo3:2181
+      AUTO_CONNECT_CONNECTION_ID: LOCALZK
+
+  # ---- Perfil "kafka": dos brokers que se coordinan a través de ZooKeeper ----
+  # Puertos 9093/9094 para no chocar con el broker del ejemplo kafka/ (9092).
+  kafka1:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: zk-kafka1
+    profiles: [kafka]
+    depends_on: [zoo1, zoo2, zoo3]
+    ports: ['9093:9093']
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+
+  kafka2:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: zk-kafka2
+    profiles: [kafka]
+    depends_on: [zoo1, zoo2, zoo3]
+    ports: ['9094:9094']
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:29092,PLAINTEXT_HOST://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2

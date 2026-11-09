@@ -1,0 +1,43 @@
+/* Estilos acotados: se conserva el diseño verde y las fuentes de Pedidos360. */
+.kv {
+  --kv-small: clamp(.875rem, .85rem + .15vw, 1rem);
+  --kv-normal: clamp(1rem, .96rem + .2vw, 1.125rem);
+  --kv-space: 1rem;
+  --kv-gap: 1.5rem;
+  min-width: 0;
+  font-size: var(--kv-normal);
+}
+.kv h1, .kv h2 { font-family: "Outfit", sans-serif; }
+.kv h2 { font-size: clamp(1.125rem, 1rem + .5vw, 1.5rem); margin-top: 0; }
+.kv p { line-height: 1.6; }
+.kv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--kv-gap); }
+.kv-panel { min-width: 0; padding: var(--kv-gap); margin-block: var(--kv-space);
+  background: var(--surface, white); border: 1px solid var(--line, #d9ece2); border-radius: .75rem; }
+.kv-grid .kv-panel { margin: 0; }
+.kv-note { color: var(--ink-700, #3d5b52); font-size: var(--kv-small); }
+.kv-error { border-left: 4px solid #a32121; padding: var(--kv-space); background: #fff1f1; color: #751414; }
+.kv-bars { display: grid; gap: var(--kv-space); }
+.kv-bar-label { display: flex; justify-content: space-between; gap: var(--kv-space);
+  margin-bottom: .5rem; font-size: var(--kv-small); }
+.kv-bar-label span { min-width: 0; overflow-wrap: anywhere; }
+.kv-bar-label strong { white-space: nowrap; }
+.kv-bar-track { height: .5rem; background: var(--green-100, #d1fae5); border-radius: .25rem; }
+.kv-bar-value { height: 100%; background: var(--green-700, #047857); border-radius: inherit; }
+.kv-metric { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); font-weight: 700; }
+.kv-form { display: flex; flex-wrap: wrap; align-items: end; gap: var(--kv-space); }
+.kv-form label { display: grid; flex: 1 1 12rem; gap: .5rem; min-width: 0; font-size: var(--kv-small); }
+.kv-form input, .kv-form select { width: 100%; min-width: 0; font: inherit; padding: .75rem;
+  color: var(--ink-950, #0b1f1a); background: white; border: 1px solid #6a827a; border-radius: .375rem; }
+.kv :focus-visible { outline: 3px solid var(--green-700, #047857); outline-offset: 3px; }
+.kv-table-wrap { overflow-x: auto; margin-top: var(--kv-space); }
+.kv-scroll-hint { display: none; }
+.kv table { width: 100%; min-width: 40rem; border-collapse: collapse; text-align: left; font-size: var(--kv-small); }
+.kv th, .kv td { padding: .75rem; border-bottom: 1px solid var(--line, #d9ece2); overflow-wrap: anywhere; }
+.kv th { background: var(--green-50, #ecfdf5); }
+@media (max-width: 720px) {
+  .kv-grid { grid-template-columns: minmax(0, 1fr); }
+  .kv-panel { padding: var(--kv-space); }
+  .kv-scroll-hint { display: block; }
+}
+.kv-pagination { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px; }
+.kv-pagination .btn:disabled { opacity:.45; cursor:not-allowed; }

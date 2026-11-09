@@ -1,0 +1,24 @@
+{
+  "name": "pedidos360-kafka",
+  "version": "1.0.0",
+  "description": "DSY1107 EA3 - Kafka aplicado a Pedidos360 (productor, consumidores report/audit, admin y DLT)",
+  "private": true,
+  "scripts": {
+    "up": "docker compose up -d",
+    "down": "docker compose down",
+    "topics": "node --env-file-if-exists=.env.local admin/setup.js",
+    "admin": "node --env-file-if-exists=.env.local admin/server.js",
+    "producer": "node --env-file-if-exists=.env.local bridge/producer.js",
+    "report": "node --env-file-if-exists=.env.local report/consumer.js",
+    "audit": "node --env-file-if-exists=.env.local audit/consumer.js",
+    "rebuild:views": "node --env-file-if-exists=.env.local admin/rebuild-views.js",
+    "bridge:sqs": "node --env-file-if-exists=.env.local bridge/sqs.js",
+    "test:integration": "node --test test/integration.test.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.1161.0",
+    "cors": "^2.8.6",
+    "express": "^4.22.3",
+    "kafkajs": "^2.2.4"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "pedidos360-laboratorio-local",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "api": "node api.cjs",
+    "report": "SERVICE=report node projection.cjs",
+    "audit": "SERVICE=audit node projection.cjs",
+    "carga": "node scripts/carga.cjs",
+    "e2e": "node scripts/e2e.cjs",
+    "unit": "node --test test/*.test.cjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sns": "3.1161.0",
+    "@aws-sdk/client-sqs": "3.1161.0",
+    "@aws-sdk/client-dynamodb": "3.1161.0",
+    "@aws-sdk/lib-dynamodb": "3.1161.0",
+    "cors": "2.8.5",
+    "express": "4.21.2",
+    "jose": "6.1.3",
+    "kafkajs": "2.2.4"
+  }
+}

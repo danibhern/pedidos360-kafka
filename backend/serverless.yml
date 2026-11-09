@@ -1,0 +1,60 @@
+service: pedidos360-api
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  region: us-east-1
+  stage: dev
+  runtime: nodejs24.x
+  memorySize: 128
+  timeout: 3
+  versionFunctions: false
+  architecture: arm64
+
+  iam:
+    role: arn:aws:iam::834313555487:role/LabRole
+
+# Referencias de la infraestructura existente.
+# Estos valores no importan ni modifican recursos por sí solos.
+custom:
+  existingHttpApiId: y92zjw9o80
+  existingJwtAuthorizerId: xz8xx0
+  existingCatalogTable: Pedidos360Catalog
+  existingOrdersTable: Pedidos360Orders
+
+functions:
+  catalogList:
+    name: catalog-list
+    handler: src/catalog-list.handler
+
+  catalogCreate:
+    name: catalog-create
+    handler: src/catalog-create.handler
+
+  catalogUpdate:
+    name: catolog-udpate
+    handler: src/catalog-update.handler
+    architecture: x86_64
+
+  catalogDelete:
+    name: catalog-delete
+    handler: src/catalog-delete.handler
+    architecture: x86_64
+
+  ordersList:
+    name: orders-list
+    handler: src/orders-list.handler
+
+  ordersCreate:
+    name: orders-create
+    handler: src/orders-create.handler
+    environment: ${file(./config/environment.dev.json):ordersCreate}
+
+  ordersStatusUpdate:
+    name: orders-status-update
+    handler: src/orders-status-update.handler
+    environment: ${file(./config/environment.dev.json):ordersStatusUpdate}
+
+resources:
+  extensions: ${file(./config/resource-extensions.dev.json)}

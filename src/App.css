@@ -1,0 +1,708 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap");
+
+:root {
+  --green-950: #052e22;
+  --green-900: #064e3b;
+  --green-800: #065f46;
+  --green-700: #047857;
+  --green-600: #059669;
+  --green-500: #10b981;
+  --green-200: #a7f3d0;
+  --green-100: #d1fae5;
+  --green-50: #ecfdf5;
+
+  --teal-500: #14b8a6;
+  --teal-400: #2dd4bf;
+
+  --ink-950: #0b1f1a;
+  --ink-700: #3d5b52;
+  --ink-500: #6a827a;
+  --surface: #ffffff;
+  --page: #eef7f2;
+  --line: #d9ece2;
+
+  --shadow-sm: 0 3px 12px rgba(6, 78, 59, 0.08);
+  --shadow-md: 0 14px 32px rgba(6, 78, 59, 0.12);
+  --shadow-lg: 0 30px 60px -20px rgba(6, 78, 59, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--page);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink-950);
+  background:
+    radial-gradient(circle at 12% -10%, rgba(45, 212, 191, 0.35), transparent 40rem),
+    radial-gradient(circle at 90% 0%, rgba(16, 185, 129, 0.22), transparent 36rem),
+    radial-gradient(circle at 50% 110%, rgba(6, 95, 70, 0.18), transparent 40rem),
+    var(--page);
+  font-family: "DM Sans", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Layout principal */
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: min(1200px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 56px 0 80px;
+  flex: 1;
+}
+
+/* =========================================================
+   Barra de navegación
+   ========================================================= */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  min-height: 88px;
+  padding: 0 max(24px, calc((100vw - 1200px) / 2));
+  color: #ffffff;
+  background:
+    linear-gradient(180deg, rgba(5, 46, 34, 0.98), rgba(6, 78, 59, 0.96));
+  border-bottom: 1px solid rgba(45, 212, 191, 0.22);
+  box-shadow: 0 10px 30px rgba(5, 46, 34, 0.28);
+  backdrop-filter: blur(14px);
+  position: relative;
+}
+
+/* Línea de acento con gradiente debajo del navbar */
+.navbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--teal-400) 20%,
+    var(--green-500) 50%,
+    var(--teal-400) 80%,
+    transparent 100%
+  );
+  opacity: 0.7;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: auto;
+  color: #ffffff;
+  font-family: "Outfit", Arial, sans-serif;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.logo span {
+  color: #ffffff;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  padding: 11px 16px;
+  color: #d1fae5;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-link.active {
+  color: #ffffff;
+  background: rgba(20, 184, 166, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(45, 212, 191, 0.35);
+}
+
+.nav-account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.account-name {
+  max-width: 260px;
+  overflow: hidden;
+  color: var(--green-100);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   Botones
+   ========================================================= */
+
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 18px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.btn:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.btn:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.btn:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--teal-400);
+  outline-offset: 2px;
+}
+
+.btn-login {
+  color: var(--green-950);
+  background: var(--green-200);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.15);
+}
+
+.btn-login:not(:disabled):hover {
+  background: #ffffff;
+}
+
+.btn-logout {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  padding: 10px 18px;
+  font-size: 0.98rem;
+}
+
+.btn-logout:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* =========================================================
+   Títulos y contenido genérico
+   ========================================================= */
+
+h1,
+h2,
+h3 {
+  font-family: "Outfit", Arial, sans-serif;
+  letter-spacing: -0.03em;
+}
+
+h1 {
+  margin: 0 0 10px;
+  color: var(--green-950);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+}
+
+h1 + p {
+  max-width: 650px;
+  margin: 0;
+  color: var(--ink-700);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+p {
+  color: var(--ink-700);
+  line-height: 1.55;
+}
+
+/* =========================================================
+   Superficie de contenido reutilizable
+   ========================================================= */
+
+.card {
+  width: 100%;
+  margin-bottom: 28px;
+  padding: 26px 28px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.card > h2:first-child,
+.card > h3:first-child {
+  margin-top: 0;
+}
+
+.card h2 {
+  color: var(--green-950);
+  font-size: 1.3rem;
+}
+
+.subtitle {
+  color: var(--ink-700);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   Estados de carga
+   ========================================================= */
+
+.loading-state {
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  color: var(--ink-700);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+/* =========================================================
+   Catálogo
+   ========================================================= */
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+  margin-top: 32px;
+}
+
+.product-card {
+  position: relative;
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 26px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.product-card::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  content: "";
+  background: linear-gradient(90deg, var(--green-600), var(--teal-400));
+}
+
+.product-card:hover {
+  border-color: var(--green-200);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
+}
+
+.product-card h2 {
+  margin: 11px 0 11px;
+  color: var(--green-950);
+  font-size: 1.32rem;
+  line-height: 1.2;
+}
+
+.product-card p {
+  margin: 0 0 11px;
+  color: var(--ink-700);
+}
+
+.product-card p:nth-of-type(2) {
+  margin-top: auto;
+  margin-bottom: 8px;
+  color: var(--green-800);
+  font-family: "Outfit", Arial, sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+/* =========================================================
+   Mensajes de carga o error
+   ========================================================= */
+
+[role="alert"] {
+  margin-top: 24px;
+  padding: 14px 16px;
+  color: #9f1239;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+[role="status"] {
+  margin-top: 24px;
+  padding: 14px 16px;
+  color: var(--green-900);
+  background: var(--green-50);
+  border: 1px solid var(--green-200);
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   Landing / Login — rediseño moderno
+   ========================================================= */
+
+.login-page {
+  min-height: calc(100vh - 88px); /* 88px = navbar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.5rem;
+  position: relative;
+}
+
+/* Halo decorativo detrás de la tarjeta */
+.login-page::before {
+  content: "";
+  position: absolute;
+  width: 640px;
+  height: 640px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(45, 212, 191, 0.22),
+    rgba(16, 185, 129, 0.08) 45%,
+    transparent 70%
+  );
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 3.75rem 3.25rem 3rem;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  animation: landingFadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+}
+
+/* Línea superior con gradiente verde → teal */
+.login-card::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  content: "";
+  background: linear-gradient(
+    90deg,
+    var(--green-600) 0%,
+    var(--teal-400) 50%,
+    var(--green-600) 100%
+  );
+  background-size: 200% 100%;
+  animation: gradientSlide 6s ease infinite;
+}
+
+@keyframes gradientSlide {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes landingFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Branding */
+.login-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-family: "Outfit", Arial, sans-serif;
+  font-weight: 800;
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.75rem;
+  color: var(--green-950);
+}
+
+.login-brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--green-600), var(--teal-500));
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(6, 78, 59, 0.25);
+}
+
+/* Títulos */
+.login-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--green-950);
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.login-subtitle {
+  font-size: 1.1rem;
+  color: var(--ink-700);
+  margin: 0 0 2.25rem;
+  line-height: 1.6;
+}
+
+/* Botón Microsoft */
+.btn-microsoft {
+  background: var(--surface);
+  color: var(--green-950);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.2rem 1.4rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease,
+    box-shadow 180ms ease, transform 160ms ease;
+  box-shadow: 0 4px 14px rgba(6, 78, 59, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  width: 100%;
+}
+
+.btn-microsoft:hover:not(:disabled) {
+  background: var(--green-50);
+  border-color: var(--green-200);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(6, 78, 59, 0.18);
+}
+
+.btn-microsoft:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-microsoft:focus-visible {
+  outline: 2px solid var(--green-600);
+  outline-offset: 3px;
+}
+
+.btn-microsoft:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.ms-icon {
+  flex-shrink: 0;
+}
+
+/* Hint debajo del botón */
+.login-hint {
+  font-size: 0.95rem;
+  color: var(--ink-500);
+  margin: 1.4rem 0 0;
+  line-height: 1.6;
+  max-width: 420px;
+  align-self: center;
+}
+
+/* Footer con soporte */
+.login-footer {
+  font-size: 0.95rem;
+  color: var(--ink-500);
+  margin-top: 2.25rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.login-footer a {
+  color: var(--green-700);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-footer a:hover {
+  color: var(--green-800);
+  text-decoration: underline;
+}
+
+/* Botón "Ir al panel" (cuando ya está autenticado) */
+.login-card .btn-login {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem 1.4rem;
+  font-size: 1.1rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--green-700), var(--green-600));
+  box-shadow: 0 8px 24px rgba(6, 78, 59, 0.28);
+  border-radius: 14px;
+}
+
+.login-card .btn-login:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--green-800), var(--green-700));
+  box-shadow: 0 12px 30px rgba(6, 78, 59, 0.35);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   Responsividad
+   ========================================================= */
+
+@media (max-width: 720px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 12px;
+    min-height: 72px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .logo {
+    margin-right: 0;
+    font-size: 1.2rem;
+  }
+
+  .nav-links {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .nav-link {
+    padding: 9px 12px;
+    font-size: 0.92rem;
+  }
+
+  .account-name {
+    max-width: 140px;
+    font-size: 0.82rem;
+  }
+
+  .card {
+    padding: 20px 18px;
+  }
+
+  .container {
+    width: min(100% - 28px, 1200px);
+    padding-top: 32px;
+  }
+
+  .catalog-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .login-page {
+    padding: 2rem 1rem;
+  }
+
+  .login-page::before {
+    width: 380px;
+    height: 380px;
+  }
+
+  .login-card {
+    padding: 2.5rem 1.75rem 2rem;
+    border-radius: 22px;
+    max-width: 100%;
+  }
+
+  .login-brand {
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .login-brand-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1.3rem;
+  }
+
+  .login-title {
+    font-size: 1.85rem;
+  }
+
+  .login-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .btn-microsoft,
+  .login-card .btn-login {
+    padding: 1rem 1rem;
+    font-size: 1rem;
+  }
+
+  .login-hint,
+  .login-footer {
+    font-size: 0.88rem;
+  }
+}

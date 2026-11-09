@@ -1,0 +1,18 @@
+# Dependencias instaladas
+node_modules/
+
+# Variables de entorno locales
+.env
+.env.*
+!.env.example
+
+# Archivos de macOS
+.DS_Store
+
+# Registros de npm
+npm-debug.log*
+
+# Archivos generados por Serverless Framework
+.serverless/
+
+backups/

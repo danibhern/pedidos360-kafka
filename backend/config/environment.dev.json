@@ -1,0 +1,9 @@
+{
+  "ordersCreate": {
+    "ORDERS_TABLE": "Pedidos360Orders",
+    "TOPIC_ARN": "arn:aws:sns:us-east-1:834313555487:pedidos360-eventos"
+  },
+  "ordersStatusUpdate": {
+    "TOPIC_ARN": "arn:aws:sns:us-east-1:834313555487:pedidos360-eventos"
+  }
+}

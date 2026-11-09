@@ -1,0 +1,595 @@
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff; color: #1a1a1a; line-height: 1.6;
+  }
+  .layout { display: flex; min-height: 100vh; }
+  nav.sidebar {
+    width: 260px; flex-shrink: 0; background: #0d2b4e; color: #cfe0f2;
+    padding: 24px 18px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  nav.sidebar h2 { color: #fff; font-size: 15px; margin: 0 0 18px; letter-spacing: 0.5px; }
+  nav.sidebar a {
+    display: block; color: #cfe0f2; text-decoration: none; font-size: 13.5px;
+    padding: 6px 8px; border-radius: 6px; margin-bottom: 2px;
+  }
+  nav.sidebar a:hover { background: #17427a; color: #fff; }
+  nav.sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #7fa8d4; margin: 16px 0 4px; padding: 0 8px; }
+  main { flex: 1; max-width: 900px; padding: 40px 56px 100px; }
+  h1 { font-size: 30px; color: #0d2b4e; margin-top: 0; }
+  h2 { font-size: 22px; color: #0d2b4e; border-bottom: 2px solid #e8eef5; padding-bottom: 8px; margin-top: 48px; }
+  h3 { font-size: 17px; color: #12467d; margin-top: 28px; }
+  p { font-size: 15px; }
+  code { background: #f0f4f8; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #b3350a; }
+  pre { background: #0d2b4e; color: #e8f0fa; padding: 16px 18px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  pre code { background: none; color: inherit; padding: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e8eef5; vertical-align: top; }
+  th { background: #f5f8fb; color: #0d2b4e; }
+  .callout { border-left: 4px solid #1a73e8; background: #eaf1fb; padding: 14px 18px; border-radius: 6px; margin: 18px 0; font-size: 14px; }
+  .callout.warn { border-left-color: #d97706; background: #fef6e7; }
+  .callout.important { border-left-color: #c0392b; background: #fbeae7; }
+  .badge { display: inline-block; background: #12467d; color: #fff; font-size: 11px; padding: 3px 9px; border-radius: 20px; margin-right: 6px; }
+  .badge.front { background: #028090; }
+  .badge.back { background: #7a3fae; }
+  .badge.new { background: #16a34a; }
+  .two-col { display: flex; gap: 20px; margin: 20px 0; }
+  .card { flex: 1; border: 1.5px solid #e0e6ee; border-radius: 10px; padding: 18px 20px; }
+  .card.front { border-color: #028090; background: #f0fbfa; }
+  .card.back { border-color: #7a3fae; background: #f8f2fc; }
+  .card h4 { margin-top: 0; }
+  .step { display: flex; gap: 14px; margin-bottom: 18px; }
+  .step .num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: #12467d; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+  .step .content { flex: 1; }
+  .step .content strong { color: #0d2b4e; }
+  hr.sep { border: none; border-top: 1px solid #e8eef5; margin: 40px 0; }
+  .source-note { font-size: 12.5px; color: #6b7280; font-style: italic; }
+  a.ext { color: #1a73e8; }
+  .changelog { background: #f5f8fb; border: 1px solid #e0e6ee; border-radius: 10px; padding: 8px 22px; margin: 20px 0; font-size: 14px; }
+</style>
+
+<div class="layout">
+<nav class="sidebar">
+  <h2>Pedidos360 &middot; Entra ID (v2)</h2>
+  <a href="#intro">Introducci&oacute;n</a>
+  <a href="#cambios">Qu&eacute; cambi&oacute; respecto a v1</a>
+  <a href="#stack">Stack de esta gu&iacute;a</a>
+  <div class="section-label">Identidad</div>
+  <a href="#tenant">1. Crear el tenant</a>
+  <a href="#dos-apps">2. Por qu&eacute; 2 aplicaciones</a>
+  <a href="#app-backend">3. Registrar app Backend</a>
+  <a href="#app-frontend">4. Registrar app Frontend</a>
+  <a href="#roles">5. Roles y asignaci&oacute;n</a>
+  <div class="section-label">Frontend</div>
+  <a href="#react">6. React + MSAL</a>
+  <a href="#guards">6b. Guards de ruta</a>
+  <div class="section-label">Backend</div>
+  <a href="#apigw">7. API Gateway + JWT Authorizer</a>
+  <a href="#cors">7b. CORS en la HTTP API</a>
+  <a href="#lambda">8. Lambda: validar rol</a>
+  <div class="section-label">Cierre</div>
+  <a href="#errores">9. Errores comunes</a>
+  <a href="#checklist">Checklist final</a>
+</nav>
+
+<main>
+
+<h1 id="intro">Gu&iacute;a pr&aacute;ctica v2: Autenticaci&oacute;n con Microsoft Entra ID para Pedidos360</h1>
+<p>Esta gu&iacute;a adapta el caso <strong>Pedidos360</strong> (DSY1107, Examen Parcial 1) usando <strong>React</strong> en el frontend y <strong>AWS API Gateway + Lambda</strong> en el backend, en vez del stack original Angular + Spring Boot. La estructura y muchos de los conceptos siguen la gu&iacute;a de referencia de nuestro colega
+<a class="ext" href="https://jmcandia.github.io/cloud-native-ms-entra-id/" target="_blank">Cloud Native &middot; Microsoft Entra ID</a>, adaptada a nuestro stack y al caso del examen.</p>
+
+<p><strong>Versi&oacute;n 2</strong> &mdash; corrige y completa la gu&iacute;a original con lo que aparece al hacer la integraci&oacute;n completa de punta a punta con las versiones actuales de las librer&iacute;as (<code>@azure/msal-browser</code> v3+, API Gateway HTTP API). Todo lo que agrega esta versi&oacute;n est&aacute; marcado con <span class="badge new">v2</span>.</p>
+
+<div class="callout important">
+<strong>Importante &mdash; versi&oacute;n del tenant.</strong> Usamos <strong>Microsoft Entra ID est&aacute;ndar</strong> (workforce tenant), no External ID/CIAM. External ID tiene un problema conocido con Azure for Students: al ser un recurso ARM, choca con la pol&iacute;tica de regiones permitidas de la suscripci&oacute;n estudiantil y falla la creaci&oacute;n. Con Entra ID est&aacute;ndar se logra casi todo el objetivo de aprendizaje (PKCE, MSAL, JWT, roles, API Gateway) &mdash; la &uacute;nica diferencia es que los usuarios los crea el administrador del tenant en vez de auto-registrarse.
+</div>
+
+<h2 id="cambios">Qu&eacute; cambi&oacute; respecto a la v1</h2>
+<div class="changelog">
+<ul>
+<li><span class="badge new">v2</span> <strong>Versi&oacute;n de token (v1 vs v2) expl&iacute;cita</strong> &mdash; se fija <code>requestedAccessTokenVersion: 2</code> en la app Backend y se alinea el <em>issuer</em> y el <em>audience</em> del Authorizer con esa versi&oacute;n. Sin esto, el token es v1 y el Authorizer configurado con <code>.../v2.0</code> devuelve <code>401</code>. (Secci&oacute;n 7.)</li>
+<li><span class="badge new">v2</span> <strong><code>await msalInstance.initialize()</code></strong> &mdash; obligatorio en <code>@azure/msal-browser</code> v3 en adelante, antes de cualquier llamada MSAL. (Secci&oacute;n 6.)</li>
+<li><span class="badge new">v2</span> <strong>Fallback a <code>acquireTokenRedirect</code></strong> &mdash; <code>acquireTokenSilent</code> tambi&eacute;n falla con <code>timed_out</code> (no solo <code>interaction_required</code>) cuando Chrome bloquea cookies de terceros. (Secci&oacute;n 6.)</li>
+<li><span class="badge new">v2</span> <strong>Guards de ruta expl&iacute;citos</strong> (<code>RequireAuth</code> / <code>RequireRole</code>) con <code>react-router-dom</code> &mdash; en vez de un <code>isAuthenticated ? ... : ...</code> inline, cada p&aacute;gina protegida cuelga de un guard nombrado y reusable, listo para las m&uacute;ltiples vistas de Pedidos360 (orders, catalog, admin&hellip;). (Secci&oacute;n 6b.)</li>
+<li><span class="badge new">v2</span> <strong>Secci&oacute;n de CORS</strong> para la HTTP API &mdash; el preflight <code>OPTIONS</code> es lo primero que rompe al conectar el frontend real. (Secci&oacute;n 7b.)</li>
+<li><span class="badge new">v2</span> <strong>Nota sobre MFA / Conditional Access</strong> &mdash; pedir un token para un recurso nuevo puede disparar un <em>step-up</em> de MFA. (Secciones 1 y 6.)</li>
+<li><span class="badge new">v2</span> <strong>Aclaraci&oacute;n sobre la cuenta y el tenant</strong> &mdash; todo se crea con la cuenta de Azure for Students; un tenant de Entra ID est&aacute;ndar (a diferencia de External ID) no pide elegir suscripci&oacute;n; y hay que confirmar el cambio de directorio antes de registrar las apps. (Secci&oacute;n 1.)</li>
+<li><span class="badge new">v2</span> <strong>Tabla de errores comunes</strong> con s&iacute;ntoma &rarr; causa &rarr; soluci&oacute;n. (Secci&oacute;n 9.)</li>
+</ul>
+</div>
+
+<h2 id="stack">Stack de esta gu&iacute;a</h2>
+<table>
+  <tr><th>Componente</th><th>Caso original (Pedidos360)</th><th>Nuestra adaptaci&oacute;n</th></tr>
+  <tr><td>Frontend</td><td>Angular + MSAL Angular</td><td><strong>React + MSAL React</strong> (<code>@azure/msal-browser</code> + <code>@azure/msal-react</code>)</td></tr>
+  <tr><td>Backend</td><td>Spring Boot (microservicios) + BFF</td><td><strong>AWS Lambda</strong> (Node.js) por dominio, sin BFF separado</td></tr>
+  <tr><td>API Manager</td><td>AWS API Gateway + JWT Authorizer</td><td>Igual: <strong>API Gateway HTTP API + JWT Authorizer nativo</strong></td></tr>
+  <tr><td>IDaaS</td><td>Azure AD / Entra External ID</td><td><strong>Microsoft Entra ID est&aacute;ndar</strong> (mismo tenant, mismo modelo de tokens)</td></tr>
+</table>
+
+<hr class="sep">
+
+<h2 id="tenant">1. Crear el tenant</h2>
+<p>Un <strong>tenant</strong> es una instancia aislada de Entra ID: un directorio propio con sus identidades, aplicaciones registradas y pol&iacute;ticas de seguridad. Cada tenant tiene un <strong>Tenant ID</strong> &uacute;nico y un dominio <code>&lt;nombre&gt;.onmicrosoft.com</code> permanente.</p>
+<p>Si ya crearon el tenant de Entra ID est&aacute;ndar en clases anteriores, pueden reutilizarlo &mdash; no hace falta uno nuevo por examen.</p>
+
+<div class="callout important">
+<strong>Todo esto se hace con su cuenta de Azure for Students.</strong> Entren a <a class="ext" href="https://portal.azure.com" target="_blank">portal.azure.com</a> con la misma cuenta con la que activaron la suscripci&oacute;n Azure for Students del curso &mdash; no con una cuenta personal ni con la cuenta institucional de otro servicio. El tenant de Entra ID que van a crear queda asociado a esa cuenta, y es <strong>desde adentro de ese tenant</strong> (una vez creado y con el directorio cambiado) que van a crear <em>todos</em> los recursos del resto de la gu&iacute;a: los dos App Registrations (secciones 3 y 4), los usuarios de prueba (secci&oacute;n 5), etc. Primero se crea el directorio; reci&eacute;n despu&eacute;s, adentro de &eacute;l, se crean los recursos.
+</div>
+
+<div class="step"><div class="num">1</div><div class="content">Entren a <a class="ext" href="https://portal.azure.com" target="_blank">portal.azure.com</a> con su cuenta de <strong>Azure for Students</strong>.</div></div>
+<div class="step"><div class="num">2</div><div class="content">Busquen <strong>"Id. de Microsoft Entra"</strong> en el Marketplace &rarr; <strong>Crear</strong>.
+<div class="callout" style="margin-top:10px">
+A diferencia de Entra <strong>External ID</strong> (que s&iacute; pide elegir Suscripci&oacute;n + Grupo de recursos, porque es un recurso ARM &mdash; y ah&iacute; es donde falla con Azure for Students), crear un tenant de Entra ID <strong>est&aacute;ndar</strong> <u>no</u> les va a pedir elegir una suscripci&oacute;n: el directorio no es un recurso que "vive dentro" de una suscripci&oacute;n, es independiente y gratuito. Lo &uacute;nico que importa es que est&eacute;n logueados con la cuenta correcta en el paso 1.
+</div>
+</div></div>
+<div class="step"><div class="num">3</div><div class="content">Completen <strong>Nombre de inquilino</strong> (ej: "Pedidos360"), <strong>Nombre de dominio</strong> (ser&aacute; <code>&lt;nombre&gt;.onmicrosoft.com</code>, no se puede cambiar despu&eacute;s) y <strong>Pa&iacute;s/regi&oacute;n</strong>.</div></div>
+<div class="step"><div class="num">4</div><div class="content">Esperen ~5 minutos. Al terminar, <strong>cambien de directorio</strong> (&iacute;cono de la cuenta, arriba a la derecha &rarr; <em>Cambiar directorio</em> / <em>Switch directory</em>) del directorio de Azure for Students al tenant nuevo, y configuren MFA con Microsoft Authenticator cuando se los pida.</div></div>
+
+<div class="callout">
+El usuario que crea el tenant queda como <strong>Global Administrator</strong> <em>de ese tenant</em>: puede registrar aplicaciones, crear usuarios y asignar roles sin restricciones. En este tenant de pr&aacute;ctica no hay problema en usarlo directamente. Confirmen que est&aacute;n parados en el tenant correcto revisando el nombre de directorio arriba a la derecha antes de seguir a la secci&oacute;n 3 &mdash; registrar la app en el directorio equivocado (el de Azure for Students en vez del tenant nuevo) es un error com&uacute;n en este paso.
+</div>
+
+<div class="callout warn">
+<span class="badge new">v2</span> <strong>Sobre la MFA.</strong> M&aacute;s adelante, cuando el frontend pida por primera vez un token <em>para la API</em> (un recurso distinto al login), Entra ID puede exigir una verificaci&oacute;n extra (MFA / Conditional Access). Es <em>step-up authentication</em>: ya estabas autenticado, pero acceder a un recurso nuevo pide una prueba m&aacute;s fuerte. Es comportamiento esperado &mdash; se completa una vez y despu&eacute;s la renovaci&oacute;n silenciosa funciona sin volver a pedirla.
+</div>
+
+<hr class="sep">
+
+<h2 id="dos-apps">2. Por qu&eacute; se registran DOS aplicaciones</h2>
+<p>Esta es la parte que m&aacute;s se presta a confusi&oacute;n, as&iacute; que vamos directo al punto: en el tenant van a registrar <strong>dos "App Registrations" distintas</strong>, una para el frontend y otra para el backend. No es porque sean literalmente dos programas separados corriendo &mdash; es porque <strong>representan dos roles distintos dentro del modelo OAuth2</strong>, y Entra ID necesita que cada rol tenga su propia identidad registrada.</p>
+
+<div class="two-col">
+  <div class="card front">
+    <span class="badge front">FRONTEND</span>
+    <h4>Pedidos360-Frontend</h4>
+    <p><strong>Rol OAuth2:</strong> Cliente p&uacute;blico (Public client)</p>
+    <p>Es quien <strong>pide</strong> el token en nombre del usuario que hace login. Corre en el navegador, no puede guardar secretos, as&iacute; que usa el flujo <strong>Authorization Code + PKCE</strong> (sin client secret).</p>
+    <p><strong>Se configura como:</strong> plataforma <em>SPA</em>, con Redirect URI apuntando a React (<code>http://localhost:5173</code>).</p>
+  </div>
+  <div class="card back">
+    <span class="badge back">BACKEND</span>
+    <h4>Pedidos360-API</h4>
+    <p><strong>Rol OAuth2:</strong> Recurso protegido (Resource server)</p>
+    <p>Es el <strong>due&ntilde;o de los datos</strong> que el frontend quiere consumir. No pide tokens &mdash; los <strong>recibe y valida</strong>. Define qu&eacute; permisos (scopes) existen sobre sus datos: <code>orders.read</code>, <code>orders.write</code>, etc.</p>
+    <p><strong>Se configura como:</strong> app sin plataforma cliente, con <em>Expose an API</em> habilitado.</p>
+  </div>
+</div>
+
+<p>El flujo completo queda as&iacute;: el usuario hace login desde <strong>Pedidos360-Frontend</strong>, que le pide a Entra ID un token con permiso para usar la API de <strong>Pedidos360-API</strong>. Entra ID entrega ese token solo si el frontend tiene <strong>API permissions</strong> concedidos sobre esos scopes del backend. El backend (v&iacute;a API Gateway) recibe el token y valida que el <code>audience</code> del token corresponda exactamente a <em>esta</em> API &mdash; es decir, que el token fue emitido espec&iacute;ficamente para hablar con ella, no con cualquier otra cosa del tenant.</p>
+
+<div class="callout">
+<strong>Analog&iacute;a r&aacute;pida:</strong> Pedidos360-Frontend es como la persona que pide una llave en porter&iacute;a. Pedidos360-API es la puerta con la cerradura. La llave (token) solo sirve porque fue cortada espec&iacute;ficamente para esa cerradura (audience = identidad del backend) &mdash; no abre cualquier puerta del edificio.
+</div>
+
+<hr class="sep">
+
+<h2 id="app-backend">3. Registrar la app Backend (Pedidos360-API)</h2>
+<p>Se registra primero porque el frontend necesita referenciarla al pedir permisos.</p>
+
+<div class="step"><div class="num">1</div><div class="content"><strong>Registros de aplicaciones &rarr; Nuevo registro.</strong> Nombre: <code>Pedidos360-API</code>. Tipo de cuenta: <em>Solo este directorio organizativo</em>. Sin Redirect URI (no la necesita, no hace login).</div></div>
+<div class="step"><div class="num">2</div><div class="content">Copien el <strong>Application (client) ID</strong> &mdash; es la identidad del backend, la van a usar en el <code>audience</code> del JWT Authorizer.</div></div>
+<div class="step"><div class="num">3</div><div class="content"><strong>Exponer una API &rarr; Agregar</strong> junto al <em>URI de identificador de aplicaci&oacute;n</em>. D&eacute;jenlo con el valor por defecto: <code>api://&lt;client-id&gt;</code>. (Aunque despu&eacute;s usemos tokens v2, este URI debe existir para poder definir scopes.)</div></div>
+<div class="step"><div class="num">4</div><div class="content">
+<strong>+ Agregar un &aacute;mbito</strong> por cada permiso que su API necesite exponer, nombrados por dominio:
+<pre><code>orders.read    &rarr; Ver pedidos
+orders.write   &rarr; Crear/actualizar pedidos
+catalog.read   &rarr; Ver cat&aacute;logo
+catalog.write  &rarr; Administrar cat&aacute;logo</code></pre>
+Para cada uno: qui&eacute;n puede dar consentimiento (recomendado: <em>Admins y usuarios</em> para simplificar el examen), nombre visible y descripci&oacute;n.
+</div></div>
+<div class="step"><div class="num">5</div><div class="content"><strong>App roles</strong> (men&uacute; lateral) &rarr; creen los roles del negocio: <code>Admin</code>, <code>Operador</code>, <code>Cliente</code>. Tipo permitido: <em>Users/Groups</em>. Estos son los roles que despu&eacute;s van a aparecer dentro del token como claim <code>roles</code>.</div></div>
+<div class="step"><div class="num">6</div><div class="content">
+<span class="badge new">v2</span> <strong>Manifest &rarr; <code>requestedAccessTokenVersion</code>.</strong> Abran <em>Manifest</em> (pesta&ntilde;a "Microsoft Graph App Manifest"), busquen el objeto <code>"api"</code> y cambien:
+<pre><code>"api": {
+    ...
+    "requestedAccessTokenVersion": 2   // estaba null
+}</code></pre>
+Guarden. Esto hace que <strong>todos</strong> los access tokens emitidos para esta API sean <strong>v2</strong>: <code>iss</code> con <code>/v2.0</code> y <code>aud</code> = el client ID pelado (sin <code>api://</code>). Ver por qu&eacute; en la secci&oacute;n 7.
+</div></div>
+
+<hr class="sep">
+
+<h2 id="app-frontend">4. Registrar la app Frontend (Pedidos360-Frontend)</h2>
+
+<div class="step"><div class="num">1</div><div class="content"><strong>Nuevo registro.</strong> Nombre: <code>Pedidos360-Frontend</code>. Tipo de cuenta: <em>Solo este directorio organizativo</em>.</div></div>
+<div class="step"><div class="num">2</div><div class="content"><strong>Authentication &rarr; + Add a platform &rarr; Single-page application (SPA)</strong>. Redirect URI: <code>http://localhost:5173</code> (Vite).
+<div class="callout warn" style="margin-top:10px">
+<span class="badge new">v2</span> Tiene que ser la plataforma <strong>SPA</strong>, <u>no</u> "Web". MSAL browser usa Authorization Code + PKCE y necesita el tipo SPA; con "Web" el login falla o da errores de CORS al canjear el c&oacute;digo.
+</div>
+</div></div>
+<div class="step"><div class="num">3</div><div class="content">Copien el <strong>Application (client) ID</strong> y el <strong>Directory (tenant) ID</strong> desde <em>Overview</em> &mdash; van directo al <code>.env</code> de React. Ojo: es el client ID de <strong>esta</strong> app (Frontend), no el del Backend.</div></div>
+<div class="step"><div class="num">4</div><div class="content"><strong>API permissions &rarr; Add a permission &rarr; My APIs &rarr; Pedidos360-API.</strong> Marquen los scopes que el frontend va a usar (ej: <code>orders.read</code>, <code>orders.write</code>).</div></div>
+<div class="step"><div class="num">5</div><div class="content"><strong>Grant admin consent</strong> para ese tenant &mdash; evita que cada usuario tenga que aprobar el permiso manualmente la primera vez que inicia sesi&oacute;n.</div></div>
+
+<div class="callout warn">
+Si se les olvida el <em>Grant admin consent</em>, el login funciona pero <code>acquireTokenSilent</code> falla al pedir el token de la API pidiendo interacci&oacute;n &mdash; es el error m&aacute;s com&uacute;n en este paso.
+</div>
+
+<hr class="sep">
+
+<h2 id="roles">5. Asignar roles a los usuarios de prueba</h2>
+<p>Como estamos en Entra ID est&aacute;ndar (no External ID), los usuarios no se auto-registran &mdash; el administrador del tenant los crea.</p>
+<div class="step"><div class="num">1</div><div class="content"><strong>Usuarios &rarr; Nuevo usuario</strong> &rarr; creen 2-3 cuentas de prueba (ej: <code>admin@&lt;tenant&gt;.onmicrosoft.com</code>, <code>operador@...</code>, <code>cliente@...</code>).</div></div>
+<div class="step"><div class="num">2</div><div class="content">Vayan a <strong>Enterprise applications &rarr; Pedidos360-API &rarr; Users and groups &rarr; Add user/group</strong>, y asignen a cada cuenta el App Role que le corresponde (Admin, Operador o Cliente).</div></div>
+<div class="step"><div class="num">3</div><div class="content">Cuando ese usuario inicie sesi&oacute;n desde el frontend, el <code>access_token</code> traer&aacute; el claim <code>"roles": ["Operador"]</code> (por ejemplo) &mdash; eso es lo que despu&eacute;s el backend usa para autorizar.</div></div>
+
+<div class="callout">
+<strong>Diferencia scopes vs roles.</strong> En el access token ver&aacute;n dos claims relacionados pero distintos: <code>scp</code> (los <em>scopes</em> delegados que el cliente pidi&oacute; y tiene concedidos, ej. <code>"orders.read orders.write"</code>) y <code>roles</code> (los <em>App Roles</em> asignados al usuario). Para "solo Admin puede editar el cat&aacute;logo" se usa <code>roles</code>. Para "este cliente solo pidi&oacute; permiso de lectura" se usa <code>scp</code>.
+</div>
+
+<hr class="sep">
+
+<h2 id="react">6. Frontend: React + MSAL</h2>
+<p>La integraci&oacute;n sigue la gu&iacute;a de referencia &mdash; los cambios reales de esta v2 son tres: llamar a <code>initialize()</code>, pedir el <em>scope de nuestra API</em> (no <code>User.Read</code> de Graph), y tener un <em>fallback</em> a redirect cuando el token silencioso no se puede renovar.</p>
+
+<h3>Instalaci&oacute;n</h3>
+<pre><code>npm create vite@latest pedidos360-frontend -- --template react-ts
+cd pedidos360-frontend
+npm install @azure/msal-browser @azure/msal-react</code></pre>
+<p class="source-note"><span class="badge new">v2</span> Si parten de un repo base que usa <code>pnpm</code> (tiene <code>pnpm-lock.yaml</code>), <code>npm install</code> falla con <code>EUNSUPPORTEDPROTOCOL "workspace:"</code>. Usen <code>corepack pnpm install</code> (corepack viene con Node).</p>
+
+<h3><code>.env</code></h3>
+<pre><code>VITE_AZURE_CLIENT_ID=&lt;client-id del Frontend&gt;
+VITE_AZURE_TENANT_ID=&lt;tenant-id&gt;
+VITE_AZURE_REDIRECT_URI=http://localhost:5173
+VITE_API_BASE_URL=https://&lt;api-id&gt;.execute-api.us-east-1.amazonaws.com
+VITE_API_SCOPE=api://&lt;client-id del Backend&gt;/orders.read</code></pre>
+
+<h3><code>src/authConfig.ts</code></h3>
+<pre><code>import type { Configuration } from "@azure/msal-browser";
+
+export const msalConfig: Configuration = {
+  auth: {
+    clientId: import.meta.env.VITE_AZURE_CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID}`,
+    redirectUri: import.meta.env.VITE_AZURE_REDIRECT_URI,
+  },
+  cache: { cacheLocation: "localStorage" },
+};
+
+// Login inicial: basta identidad
+export const loginRequest = { scopes: ["openid", "profile"] };
+
+// OJO: para llamar al backend pedimos el scope de NUESTRA API, no User.Read de Graph
+export const apiRequest = {
+  scopes: [import.meta.env.VITE_API_SCOPE],
+};</code></pre>
+
+<div class="callout">
+Este es el detalle m&aacute;s importante de la integraci&oacute;n: al pedir el scope <code>api://&lt;backend-client-id&gt;/orders.read</code>, el <code>access_token</code> que MSAL obtiene trae <strong>audience = identidad del backend</strong>. Ese mismo audience es el que configuramos en el JWT Authorizer de API Gateway &mdash; si no coinciden, el Gateway rechaza el token con 401.
+</div>
+
+<h3><span class="badge new">v2</span> <code>src/main.tsx</code> &mdash; inicializar antes de renderizar</h3>
+<pre><code>import { PublicClientApplication, EventType } from "@azure/msal-browser";
+import { MsalProvider } from "@azure/msal-react";
+import { msalConfig } from "./authConfig";
+
+const msalInstance = new PublicClientApplication(msalConfig);
+
+msalInstance.addEventCallback((event) =&gt; {
+  if (event.eventType === EventType.LOGIN_SUCCESS &amp;&amp; event.payload) {
+    msalInstance.setActiveAccount(event.payload.account);
+  }
+});
+
+// OBLIGATORIO en @azure/msal-browser v3+. Sin esto:
+//   BrowserAuthError: uninitialized_public_client_application
+msalInstance.initialize().then(() =&gt; {
+  if (!msalInstance.getActiveAccount() &amp;&amp; msalInstance.getAllAccounts().length &gt; 0) {
+    msalInstance.setActiveAccount(msalInstance.getAllAccounts()[0]);
+  }
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    &lt;MsalProvider instance={msalInstance}&gt;&lt;App /&gt;&lt;/MsalProvider&gt;
+  );
+});</code></pre>
+
+<h3><span class="badge new">v2</span> <code>src/useApi.ts</code> &mdash; interceptor con fallback a redirect</h3>
+<pre><code>import { useMsal } from "@azure/msal-react";
+import { InteractionRequiredAuthError, BrowserAuthError } from "@azure/msal-browser";
+import { apiRequest } from "./authConfig";
+
+export function useApi() {
+  const { instance, accounts } = useMsal();
+
+  const fetchWithToken = async (path: string, init: RequestInit = {}) =&gt; {
+    const account = accounts[0] || instance.getActiveAccount();
+    if (!account) throw new Error("No hay una cuenta activa");
+
+    let token: string;
+    try {
+      const r = await instance.acquireTokenSilent({ ...apiRequest, account });
+      token = r.accessToken;
+    } catch (e) {
+      // interaction_required / consent_required  -&gt; falta consentimiento o MFA
+      // timed_out / monitor_window_timeout       -&gt; el iframe silencioso no completa
+      //   (Chrome bloquea cookies de terceros para login.microsoftonline.com)
+      const needsInteraction =
+        e instanceof InteractionRequiredAuthError ||
+        (e instanceof BrowserAuthError &amp;&amp;
+         ["timed_out", "monitor_window_timeout"].includes(e.errorCode));
+      if (needsInteraction) {
+        await instance.acquireTokenRedirect({ ...apiRequest, account }); // navega y vuelve
+      }
+      throw e;
+    }
+
+    return fetch(`${import.meta.env.VITE_API_BASE_URL}${path}`, {
+      ...init,
+      headers: { ...init.headers, Authorization: `Bearer ${token}` },
+    });
+  };
+
+  return { fetchWithToken };
+}</code></pre>
+
+<p>El resto (<code>App.tsx</code> con <code>loginRedirect</code>/<code>logoutRedirect</code>) sigue el patr&oacute;n de la gu&iacute;a de referencia. La llamada real:</p>
+<pre><code>const res = await fetchWithToken("/orders");   // -&gt; GET https://&lt;api-id&gt;.execute-api.../orders</code></pre>
+
+<hr class="sep">
+
+<h2 id="guards">6b. <span class="badge new">v2</span> Guards de ruta: RequireAuth y RequireRole</h2>
+<p>Pedidos360 no es una sola pantalla &mdash; va a tener vistas para <code>orders</code>, <code>catalog</code>, y una secci&oacute;n de administraci&oacute;n. Eso sigue siendo una SPA (sigue siendo <em>un</em> cliente con enrutamiento en el navegador, sin recargar p&aacute;gina) &mdash; lo que cambia es que ahora hay varias rutas, y cada una necesita decidir "&iquest;puede este usuario ver esto?" antes de renderizar. Esa decisi&oacute;n es un <strong>guard</strong>, el mismo concepto que un <code>CanActivate</code> de Angular Router.</p>
+
+<p>La forma correcta de aplicarlo con <code>react-router-dom</code> es como <strong>layout route</strong>: un componente guard que envuelve un <code>&lt;Outlet/&gt;</code>, y todas las rutas protegidas cuelgan de &eacute;l. As&iacute; el guard se escribe <strong>una vez</strong> y no se repite un <code>if (isAuthenticated)</code> en cada p&aacute;gina nueva.</p>
+
+<div class="two-col">
+  <div class="card front">
+    <span class="badge front">AUTENTICACI&Oacute;N</span>
+    <h4>RequireAuth</h4>
+    <p>&iquest;Hay sesi&oacute;n activa? Si no, redirige sola al login &mdash; no hace falta un bot&oacute;n en cada p&aacute;gina protegida.</p>
+  </div>
+  <div class="card back">
+    <span class="badge back">AUTORIZACI&Oacute;N</span>
+    <h4>RequireRole</h4>
+    <p>Con sesi&oacute;n ya confirmada: &iquest;el usuario tiene el App Role que esta secci&oacute;n exige? Si no, muestra un mensaje &mdash; no navega a ning&uacute;n lado.</p>
+  </div>
+</div>
+
+<h3><code>src/RequireAuth.tsx</code></h3>
+<pre><code>import { Outlet } from "react-router-dom";
+import { MsalAuthenticationTemplate } from "@azure/msal-react";
+import { InteractionType } from "@azure/msal-browser";
+import { loginRequest } from "./authConfig";
+
+export function RequireAuth() {
+  return (
+    &lt;MsalAuthenticationTemplate
+      interactionType={InteractionType.Redirect}
+      authenticationRequest={loginRequest}
+      loadingComponent={() =&gt; &lt;p&gt;Redirigiendo a inicio de sesi&oacute;n&hellip;&lt;/p&gt;}
+    &gt;
+      {/* Todo lo que cuelgue de esta ruta en App.tsx se renderiza ac&aacute; */}
+      &lt;Outlet /&gt;
+    &lt;/MsalAuthenticationTemplate&gt;
+  );
+}</code></pre>
+
+<p><code>MsalAuthenticationTemplate</code> es el guard de autenticaci&oacute;n que ya trae MSAL React &mdash; usarlo en vez de un ternario a mano tambi&eacute;n ense&ntilde;a que esto es un concepto de la librer&iacute;a, no un if/else improvisado.</p>
+
+<h3><code>src/RequireRole.tsx</code></h3>
+<pre><code>import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
+import { useMsal } from "@azure/msal-react";
+import { acquireApiToken } from "./api/client"; // el mismo helper de la secci&oacute;n 6
+import { decodeJwt } from "./lib/jwt";
+
+export function RequireRole({ role }: { role: string }) {
+  const { instance, accounts } = useMsal();
+  const account = accounts[0] ?? instance.getActiveAccount();
+  const [status, setStatus] = useState&lt;"loading" | "allowed" | "denied"&gt;("loading");
+
+  useEffect(() =&gt; {
+    if (!account) return;
+    let cancelled = false;
+    acquireApiToken(instance, account)
+      .then((token) =&gt; {
+        if (cancelled) return;
+        const roles = decodeJwt(token)?.roles ?? [];
+        setStatus(roles.includes(role) ? "allowed" : "denied");
+      })
+      .catch(() =&gt; !cancelled &amp;&amp; setStatus("denied"));
+    return () =&gt; { cancelled = true; };
+  }, [instance, account, role]);
+
+  if (!account || status === "loading") return &lt;p&gt;Verificando permisos&hellip;&lt;/p&gt;;
+  if (status === "denied") return &lt;p&gt;Requiere el rol {role}.&lt;/p&gt;;
+  return &lt;Outlet /&gt;;
+}</code></pre>
+
+<div class="callout important">
+<strong>Por qu&eacute; no <code>accounts[0].idTokenClaims.roles</code>.</strong> El claim <code>roles</code> de los App Roles vive en el <strong>access token de la API</strong> (el que se pide con <code>apiRequest</code>, audience = tu backend) &mdash; no en el ID token del login, cuya audience es la propia app Frontend. Por eso <code>RequireRole</code> llama a <code>acquireApiToken</code>, el mismo helper que ya usa el interceptor: as&iacute; el guard revisa exactamente el mismo claim que despu&eacute;s va a revisar la Lambda, sin una fuente de verdad paralela que se pueda desincronizar.
+</div>
+
+<div class="callout warn">
+Un guard de rol es <strong>UX, no seguridad</strong>: solo evita que el bot&oacute;n aparezca. Un usuario podr&iacute;a llamar la API directamente sin pasar por React. La Lambda tiene que volver a validar el rol con el mismo claim (secci&oacute;n 8) &mdash; el guard nunca reemplaza esa validaci&oacute;n en el backend.
+</div>
+
+<h3>Arm&aacute;ndolo en <code>App.tsx</code></h3>
+<pre><code>&lt;Routes&gt;
+  &lt;Route path="/" element={&lt;Landing /&gt;} /&gt;
+
+  {/* Guard de AUTENTICACI&Oacute;N: agrupa las rutas que exigen sesi&oacute;n */}
+  &lt;Route element={&lt;RequireAuth /&gt;}&gt;
+    &lt;Route path="/orders" element={&lt;Orders /&gt;} /&gt;
+    &lt;Route path="/catalog" element={&lt;Catalog /&gt;} /&gt;
+
+    {/* Guard de AUTORIZACI&Oacute;N anidado: adem&aacute;s exige el rol Admin */}
+    &lt;Route element={&lt;RequireRole role="Admin" /&gt;}&gt;
+      &lt;Route path="/admin" element={&lt;AdminPanel /&gt;} /&gt;
+    &lt;/Route&gt;
+  &lt;/Route&gt;
+&lt;/Routes&gt;</code></pre>
+
+<p>Cada vista nueva de Pedidos360 (<code>/orders</code>, <code>/catalog</code>, lo que necesiten) se agrega como una l&iacute;nea de <code>&lt;Route&gt;</code> anidada &mdash; el guard no se vuelve a escribir. Si un dominio necesita un rol distinto, se anida su propio <code>&lt;RequireRole role="..."/&gt;</code> alrededor de esa rama.</p>
+
+<div class="callout">
+El c&oacute;digo de este repositorio de ejemplo ya trae <code>RequireAuth</code>/<code>RequireRole</code> funcionando con dos rutas: <code>/dashboard</code> (requiere sesi&oacute;n) y <code>/admin</code> (requiere adem&aacute;s el App Role <code>Admin</code>, que en este tenant de ejemplo nadie tiene asignado a&uacute;n &mdash; por eso <code>/admin</code> muestra "Acceso restringido": es el guard funcionando, no un error).
+</div>
+
+<hr class="sep">
+
+<h2 id="apigw">7. Backend: API Gateway + JWT Authorizer</h2>
+<p>A diferencia del ejercicio con Spring Security (donde hab&iacute;a que validar el JWT a mano), <strong>API Gateway HTTP API valida el token antes de que la petici&oacute;n llegue a la Lambda</strong> &mdash; no se escribe c&oacute;digo de validaci&oacute;n de firma, issuer ni audience.</p>
+
+<div class="step"><div class="num">1</div><div class="content">En API Gateway, creen una <strong>HTTP API</strong> con rutas como <code>GET /orders</code>, <code>POST /orders</code>, <code>GET /catalog</code>, <code>PUT /catalog/{id}</code>, cada una integrada a su Lambda correspondiente.</div></div>
+<div class="step"><div class="num">2</div><div class="content"><strong>Authorization &rarr; Manage authorizers &rarr; Create &rarr; JWT.</strong> Configuren seg&uacute;n la versi&oacute;n de token (ver tabla abajo). Con <code>requestedAccessTokenVersion: 2</code> en la app Backend (secci&oacute;n 3, paso 6):
+<pre><code>Issuer URL:  https://login.microsoftonline.com/&lt;TENANT_ID&gt;/v2.0
+Audience:    &lt;client-id del Backend&gt;      (GUID pelado, SIN api://)</code></pre>
+</div></div>
+<div class="step"><div class="num">3</div><div class="content">Adjunten ese Authorizer a cada ruta protegida y agreguen la <em>scope</em> requerida si quieren que el Authorizer tambi&eacute;n filtre por permiso (ej. <code>orders.read</code>). API Gateway ahora responde <code>401</code> antes de invocar la Lambda ante cualquier request sin token, con firma incorrecta, issuer distinto o audience distinto.</div></div>
+
+<div class="callout important">
+<span class="badge new">v2</span> <strong>La trampa v1 / v2 (causa #1 de <code>401</code>).</strong> El <code>iss</code> y el <code>aud</code> del token dependen de la versi&oacute;n que emita la app Backend. Tienen que ser un <strong>conjunto coherente</strong>: no se puede mezclar el issuer de v2 con el audience estilo v1.
+</div>
+
+<table>
+  <tr><th></th><th>v1 (por defecto, <code>requestedAccessTokenVersion: null</code>)</th><th>v2 (<code>requestedAccessTokenVersion: 2</code>) &mdash; recomendado</th></tr>
+  <tr><td><code>iss</code> del token</td><td><code>https://sts.windows.net/&lt;TENANT_ID&gt;/</code> <em>(con <code>/</code> final)</em></td><td><code>https://login.microsoftonline.com/&lt;TENANT_ID&gt;/v2.0</code></td></tr>
+  <tr><td><code>aud</code> del token</td><td><code>api://&lt;backend-client-id&gt;</code></td><td><code>&lt;backend-client-id&gt;</code> (GUID pelado)</td></tr>
+  <tr><td>Authorizer &middot; Issuer URL</td><td><code>https://sts.windows.net/&lt;TENANT_ID&gt;/</code></td><td><code>https://login.microsoftonline.com/&lt;TENANT_ID&gt;/v2.0</code></td></tr>
+  <tr><td>Authorizer &middot; Audience</td><td><code>api://&lt;backend-client-id&gt;</code></td><td><code>&lt;backend-client-id&gt;</code></td></tr>
+</table>
+
+<p><strong>Recomendaci&oacute;n: v2.</strong> Es el est&aacute;ndar OIDC actual, el issuer coincide con el patr&oacute;n <code>.well-known/openid-configuration</code> que ya vieron en la actividad de decodificar JWT, y si alg&uacute;n d&iacute;a migran a External ID (que solo emite v2) la configuraci&oacute;n del Authorizer no cambia. Para elegir v2, hagan el paso 6 de la secci&oacute;n 3.</p>
+
+<div class="callout">
+Para <em>ver</em> qu&eacute; trae realmente su token: c&oacute;pienlo desde la consola del navegador y p&eacute;guenlo en <a class="ext" href="https://jwt.ms" target="_blank">jwt.ms</a>. Verifiquen <code>aud</code>, <code>iss</code>, <code>scp</code>, <code>roles</code> y <code>exp</code> antes de pelear con el Authorizer.
+</div>
+
+<hr class="sep">
+
+<h2 id="cors">7b. <span class="badge new">v2</span> CORS en la HTTP API</h2>
+<p>Apenas el frontend real (en <code>http://localhost:5173</code>) llama a la API, el navegador manda primero una petici&oacute;n <strong>preflight <code>OPTIONS</code></strong> &mdash; porque la llamada lleva el header <code>Authorization</code>, lo que la vuelve una petici&oacute;n "no simple". Si API Gateway no responde ese preflight con las cabeceras CORS, ver&aacute;n en consola:</p>
+<pre><code>Access to fetch at '...execute-api.../orders' from origin 'http://localhost:5173'
+has been blocked by CORS policy: Response to preflight request doesn't pass
+access control check: No 'Access-Control-Allow-Origin' header is present...</code></pre>
+
+<p>Esto es <strong>independiente de la autenticaci&oacute;n</strong> &mdash; el preflight <code>OPTIONS</code> ni siquiera lleva token. Se arregla en la consola de API Gateway:</p>
+
+<div class="step"><div class="num">1</div><div class="content">API Gateway &rarr; su HTTP API &rarr; <strong>CORS</strong> &rarr; <em>Configure</em>.</div></div>
+<div class="step"><div class="num">2</div><div class="content">
+<table style="margin-top:0">
+  <tr><td>Access-Control-Allow-Origin</td><td><code>http://localhost:5173</code></td></tr>
+  <tr><td>Access-Control-Allow-Headers</td><td><code>authorization, content-type</code></td></tr>
+  <tr><td>Access-Control-Allow-Methods</td><td><code>GET, POST, PUT, DELETE, OPTIONS</code></td></tr>
+  <tr><td>Access-Control-Max-Age</td><td><code>300</code></td></tr>
+</table>
+</div></div>
+<div class="step"><div class="num">3</div><div class="content">Guarden. La HTTP API responde el <code>OPTIONS</code> por s&iacute; sola y <strong>no ejecuta el Authorizer</strong> en el preflight, as&iacute; que no hace falta una ruta <code>OPTIONS</code> aparte.</div></div>
+
+<p>Por CLI:</p>
+<pre><code>aws apigatewayv2 update-api --api-id &lt;API_ID&gt; --region us-east-1 \
+  --cors-configuration AllowOrigins="http://localhost:5173",AllowMethods="GET,POST,PUT,DELETE,OPTIONS",AllowHeaders="authorization,content-type",MaxAge=300</code></pre>
+
+<div class="callout warn">
+Si su integraci&oacute;n es <strong>Lambda proxy</strong>, la respuesta real (200) tambi&eacute;n necesita el header <code>Access-Control-Allow-Origin</code>. En HTTP API se agrega solo cuando CORS est&aacute; configurado; en REST API la Lambda lo debe devolver en <code>headers</code>.
+</div>
+
+<hr class="sep">
+
+<h2 id="lambda">8. Lambda: autorizaci&oacute;n por rol</h2>
+<p>El JWT Authorizer valida que el token sea <em>aut&eacute;ntico</em>, pero no sabe de reglas de negocio como "solo Admin puede editar cat&aacute;logo". Eso se revisa dentro de la Lambda, leyendo el claim <code>roles</code> (o <code>scp</code>) que ya viene validado en el token.</p>
+
+<pre><code>// catalog-update/index.mjs
+export const handler = async (event) =&gt; {
+  // API Gateway ya valid&oacute; firma/issuer/audience. Ac&aacute; solo leemos claims.
+  const claims = event.requestContext.authorizer.jwt.claims;
+
+  // OJO: en HTTP API + JWT Authorizer, los claims que en el JWT original son
+  // ARRAY (como "roles") llegan achatados a STRING (no como array JSON), y
+  // "scp" siempre fue string separado por espacios. El separador exacto que
+  // usa API Gateway para achatar arrays puede ser espacio o coma seg&uacute;n el
+  // claim &mdash; hagan console.log(JSON.stringify(claims)) una vez y ajusten
+  // el split si hace falta. Este regex cubre ambos casos:
+  const split = (v) => (v || "").split(/[\s,]+/).filter(Boolean);
+  const roles = split(claims.roles);
+  const scopes = split(claims.scp);
+
+  if (!roles.includes("Admin")) {
+    return { statusCode: 403, body: JSON.stringify({ error: "Requiere rol Admin" }) };
+  }
+
+  // ... l&oacute;gica de negocio (actualizar producto) ...
+  return { statusCode: 200, body: JSON.stringify({ ok: true }) };
+};</code></pre>
+
+<div class="callout warn">
+El claim de roles en API Gateway HTTP API con JWT Authorizer llega dentro de <code>event.requestContext.authorizer.jwt.claims</code>, <strong>no</strong> en <code>event.headers</code>. Y llega como <strong>string</strong> (achatado), no como array. Es el error m&aacute;s com&uacute;n al conectar por primera vez &mdash; hagan <code>console.log(JSON.stringify(event.requestContext.authorizer))</code> si el claim no aparece donde esperan o el <code>.split()</code> no separa como esperaban.
+</div>
+
+<hr class="sep">
+
+<h2 id="errores">9. <span class="badge new">v2</span> Errores comunes</h2>
+<table>
+  <tr><th>S&iacute;ntoma</th><th>Causa</th><th>Soluci&oacute;n</th></tr>
+  <tr>
+    <td><code>AADSTS500113: No reply address is registered</code></td>
+    <td>La Redirect URI no est&aacute; registrada, est&aacute; como plataforma "Web" en vez de "SPA", o el <code>VITE_AZURE_CLIENT_ID</code> apunta a la otra app.</td>
+    <td>En la app Frontend: Authentication &rarr; Add a platform &rarr; <strong>SPA</strong> &rarr; <code>http://localhost:5173</code>. Verificar que el client ID del <code>.env</code> sea el de la app Frontend.</td>
+  </tr>
+  <tr>
+    <td><code>BrowserAuthError: uninitialized_public_client_application</code></td>
+    <td>No se llam&oacute; <code>await msalInstance.initialize()</code> antes de usar MSAL (obligatorio en msal-browser v3+).</td>
+    <td>Inicializar antes de renderizar (secci&oacute;n 6).</td>
+  </tr>
+  <tr>
+    <td>Pantalla en blanco justo despu&eacute;s del login</td>
+    <td>MSAL est&aacute; procesando el <code>#code=...</code> del redirect.</td>
+    <td>Normal por unos milisegundos. Si persiste, revisar consola por errores.</td>
+  </tr>
+  <tr>
+    <td><code>BrowserAuthError: timed_out</code> / <code>monitor_window_timeout</code> al pedir el token de la API</td>
+    <td>El iframe silencioso no puede completar: Chrome bloquea cookies de terceros para <code>login.microsoftonline.com</code>, o falta el <em>admin consent</em>.</td>
+    <td>Fallback a <code>acquireTokenRedirect</code> (secci&oacute;n 6). Confirmar <em>Grant admin consent</em> en la app Frontend.</td>
+  </tr>
+  <tr>
+    <td>Prompt de MFA al pedir el token de la API (no en el login)</td>
+    <td>Conditional Access hace <em>step-up</em> al acceder por primera vez a un recurso protegido nuevo.</td>
+    <td>Completar la MFA una vez. Despu&eacute;s la renovaci&oacute;n silenciosa funciona hasta que expira el claim.</td>
+  </tr>
+  <tr>
+    <td><code>CORS policy: No 'Access-Control-Allow-Origin' header</code></td>
+    <td>API Gateway no responde el preflight <code>OPTIONS</code>.</td>
+    <td>Configurar CORS en la HTTP API (secci&oacute;n 7b).</td>
+  </tr>
+  <tr>
+    <td><code>401</code> desde API Gateway (nunca llega a la Lambda)</td>
+    <td><code>iss</code> o <code>aud</code> del token no coinciden con el Authorizer. T&iacute;pico: mezclar v1/v2, o falta la <code>/</code> final del issuer v1.</td>
+    <td>Pegar el token en <a class="ext" href="https://jwt.ms" target="_blank">jwt.ms</a>, comparar <code>iss</code>/<code>aud</code> con el Authorizer usando la tabla de la secci&oacute;n 7.</td>
+  </tr>
+  <tr>
+    <td><code>403</code> desde la Lambda</td>
+    <td>El token es v&aacute;lido pero el usuario no tiene el rol/scope requerido.</td>
+    <td>Asignar el App Role al usuario (secci&oacute;n 5). Revisar <code>claims.roles</code> / <code>claims.scp</code> (llegan como string, no array).</td>
+  </tr>
+  <tr>
+    <td><code>npm install</code> &rarr; <code>EUNSUPPORTEDPROTOCOL "workspace:"</code></td>
+    <td>El repo base usa <code>pnpm</code> (tiene <code>pnpm-lock.yaml</code>).</td>
+    <td><code>corepack pnpm install</code>.</td>
+  </tr>
+</table>
+
+<hr class="sep">
+
+<h2 id="checklist">Checklist final</h2>
+<table>
+  <tr><th>&#10003;</th><th>&Iacute;tem</th></tr>
+  <tr><td>&#9744;</td><td>Tenant Entra ID est&aacute;ndar creado (o reutilizado); MFA configurada</td></tr>
+  <tr><td>&#9744;</td><td>App <code>Pedidos360-API</code> registrada: <em>Expose an API</em> + scopes por dominio + App Roles + <code>requestedAccessTokenVersion: 2</code></td></tr>
+  <tr><td>&#9744;</td><td>App <code>Pedidos360-Frontend</code> registrada como <strong>SPA</strong>, con permisos hacia Pedidos360-API + <em>admin consent</em></td></tr>
+  <tr><td>&#9744;</td><td>Usuarios de prueba creados y con App Role asignado (Admin/Operador/Cliente)</td></tr>
+  <tr><td>&#9744;</td><td>React + MSAL: <code>initialize()</code> antes de render; login PKCE; <code>useApi</code> pide el scope de la API con fallback a redirect</td></tr>
+  <tr><td>&#9744;</td><td>Rutas protegidas con guards expl&iacute;citos: <code>RequireAuth</code> como layout route, <code>RequireRole</code> anidado donde corresponda</td></tr>
+  <tr><td>&#9744;</td><td>API Gateway HTTP API con JWT Authorizer (issuer + audience <strong>v2</strong>, coherentes) en todas las rutas protegidas</td></tr>
+  <tr><td>&#9744;</td><td>CORS de la HTTP API configurado para <code>http://localhost:5173</code></td></tr>
+  <tr><td>&#9744;</td><td>Lambdas validando el claim <code>roles</code> / <code>scp</code> y devolviendo <code>401</code>/<code>403</code> seg&uacute;n corresponda</td></tr>
+  <tr><td>&#9744;</td><td>Token verificado en <a class="ext" href="https://jwt.ms" target="_blank">jwt.ms</a>: <code>aud</code>, <code>iss</code>, <code>scp</code>, <code>roles</code>, <code>exp</code></td></tr>
+</table>
+
+<p class="source-note">Estructura y algunos fragmentos de c&oacute;digo adaptados de la gu&iacute;a de referencia <a class="ext" href="https://jmcandia.github.io/cloud-native-ms-entra-id/" target="_blank">jmcandia.github.io/cloud-native-ms-entra-id</a>, ajustados al caso Pedidos360 (DSY1107) y al stack React + API Gateway + Lambda. Versi&oacute;n 2: correcciones a partir de la integraci&oacute;n completa de punta a punta.</p>
+
+</main>
+</div>

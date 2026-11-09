@@ -1,0 +1,254 @@
+{
+  "CatalogListLambdaFunction": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "FunctionName": "catalog-list",
+      "Runtime": "nodejs24.x",
+      "Role": "arn:aws:iam::834313555487:role/LabRole",
+      "MemorySize": 128,
+      "Timeout": 3,
+      "Architectures": [
+        "arm64"
+      ],
+      "PackageType": "Zip",
+      "TracingConfig": {
+        "Mode": "PassThrough"
+      },
+      "EphemeralStorage": {
+        "Size": 512
+      },
+      "LoggingConfig": {
+        "LogFormat": "Text",
+        "LogGroup": "/aws/lambda/catalog-list"
+      },
+      "SnapStart": {
+        "ApplyOn": "None"
+      }
+    }
+  },
+  "CatalogListLogGroup": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "LogGroupName": "/aws/lambda/catalog-list",
+      "LogGroupClass": "STANDARD"
+    }
+  },
+  "CatalogCreateLambdaFunction": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "FunctionName": "catalog-create",
+      "Runtime": "nodejs24.x",
+      "Role": "arn:aws:iam::834313555487:role/LabRole",
+      "MemorySize": 128,
+      "Timeout": 3,
+      "Architectures": [
+        "arm64"
+      ],
+      "PackageType": "Zip",
+      "TracingConfig": {
+        "Mode": "PassThrough"
+      },
+      "EphemeralStorage": {
+        "Size": 512
+      },
+      "LoggingConfig": {
+        "LogFormat": "Text",
+        "LogGroup": "/aws/lambda/catalog-create"
+      },
+      "SnapStart": {
+        "ApplyOn": "None"
+      }
+    }
+  },
+  "CatalogCreateLogGroup": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "LogGroupName": "/aws/lambda/catalog-create",
+      "LogGroupClass": "STANDARD"
+    }
+  },
+  "CatalogUpdateLambdaFunction": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "FunctionName": "catolog-udpate",
+      "Runtime": "nodejs24.x",
+      "Role": "arn:aws:iam::834313555487:role/LabRole",
+      "MemorySize": 128,
+      "Timeout": 3,
+      "Architectures": [
+        "x86_64"
+      ],
+      "PackageType": "Zip",
+      "TracingConfig": {
+        "Mode": "PassThrough"
+      },
+      "EphemeralStorage": {
+        "Size": 512
+      },
+      "LoggingConfig": {
+        "LogFormat": "Text",
+        "LogGroup": "/aws/lambda/catolog-udpate"
+      },
+      "SnapStart": {
+        "ApplyOn": "None"
+      }
+    }
+  },
+  "CatalogUpdateLogGroup": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "LogGroupName": "/aws/lambda/catolog-udpate",
+      "LogGroupClass": "STANDARD"
+    }
+  },
+  "CatalogDeleteLambdaFunction": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "FunctionName": "catalog-delete",
+      "Runtime": "nodejs24.x",
+      "Role": "arn:aws:iam::834313555487:role/LabRole",
+      "MemorySize": 128,
+      "Timeout": 3,
+      "Architectures": [
+        "x86_64"
+      ],
+      "PackageType": "Zip",
+      "TracingConfig": {
+        "Mode": "PassThrough"
+      },
+      "EphemeralStorage": {
+        "Size": 512
+      },
+      "LoggingConfig": {
+        "LogFormat": "Text",
+        "LogGroup": "/aws/lambda/catalog-delete"
+      },
+      "SnapStart": {
+        "ApplyOn": "None"
+      }
+    }
+  },
+  "CatalogDeleteLogGroup": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "LogGroupName": "/aws/lambda/catalog-delete",
+      "LogGroupClass": "STANDARD"
+    }
+  },
+  "OrdersListLambdaFunction": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "FunctionName": "orders-list",
+      "Runtime": "nodejs24.x",
+      "Role": "arn:aws:iam::834313555487:role/LabRole",
+      "MemorySize": 128,
+      "Timeout": 3,
+      "Architectures": [
+        "arm64"
+      ],
+      "PackageType": "Zip",
+      "TracingConfig": {
+        "Mode": "PassThrough"
+      },
+      "EphemeralStorage": {
+        "Size": 512
+      },
+      "LoggingConfig": {
+        "LogFormat": "Text",
+        "LogGroup": "/aws/lambda/orders-list"
+      },
+      "SnapStart": {
+        "ApplyOn": "None"
+      }
+    }
+  },
+  "OrdersListLogGroup": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "LogGroupName": "/aws/lambda/orders-list",
+      "LogGroupClass": "STANDARD"
+    }
+  },
+  "OrdersCreateLambdaFunction": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "FunctionName": "orders-create",
+      "Runtime": "nodejs24.x",
+      "Role": "arn:aws:iam::834313555487:role/LabRole",
+      "MemorySize": 128,
+      "Timeout": 3,
+      "Architectures": [
+        "arm64"
+      ],
+      "PackageType": "Zip",
+      "TracingConfig": {
+        "Mode": "PassThrough"
+      },
+      "EphemeralStorage": {
+        "Size": 512
+      },
+      "LoggingConfig": {
+        "LogFormat": "Text",
+        "LogGroup": "/aws/lambda/orders-create"
+      },
+      "SnapStart": {
+        "ApplyOn": "None"
+      }
+    }
+  },
+  "OrdersCreateLogGroup": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "LogGroupName": "/aws/lambda/orders-create",
+      "LogGroupClass": "STANDARD"
+    }
+  },
+  "OrdersStatusUpdateLambdaFunction": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "FunctionName": "orders-status-update",
+      "Runtime": "nodejs24.x",
+      "Role": "arn:aws:iam::834313555487:role/LabRole",
+      "MemorySize": 128,
+      "Timeout": 3,
+      "Architectures": [
+        "arm64"
+      ],
+      "PackageType": "Zip",
+      "TracingConfig": {
+        "Mode": "PassThrough"
+      },
+      "EphemeralStorage": {
+        "Size": 512
+      },
+      "LoggingConfig": {
+        "LogFormat": "Text",
+        "LogGroup": "/aws/lambda/orders-status-update"
+      },
+      "SnapStart": {
+        "ApplyOn": "None"
+      }
+    }
+  },
+  "OrdersStatusUpdateLogGroup": {
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Properties": {
+      "LogGroupName": "/aws/lambda/orders-status-update",
+      "LogGroupClass": "STANDARD"
+    }
+  }
+}

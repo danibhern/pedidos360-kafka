@@ -1,0 +1,50 @@
+{
+  "name": "vite-entra",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1143.0",
+    "@aws-sdk/util-dynamodb": "^3.996.9",
+    "@azure/msal-browser": "^5.19.0",
+    "@azure/msal-react": "^5.6.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@types/babel__core": "^7.20.5",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "oxlint": "^1.79.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.2"
+  },
+  "description": "Plataforma de gestión de productos electrónicos (**DSY1107 · Desarrollo Cloud Native I**). SPA en **React + Vite + TypeScript** que se autentica contra **Microsoft Entra ID** con **MSAL** y consume una API protegida en **AWS API Gateway (HTTP API) + Lambda**.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danibhern/pedidos360-frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danibhern/pedidos360-frontend/issues"
+  },
+  "homepage": "https://github.com/danibhern/pedidos360-frontend#readme"
+}
