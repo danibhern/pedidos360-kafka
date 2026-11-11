@@ -103,7 +103,7 @@ function iniciarHttp({
       .map(evento => ({
         fecha: evento.fecha,
         tipo: evento.tipo,
-        quien: `${evento.actor.usuario} (${evento.actor.rol})`,
+        quien: [evento.actor.nombre,`${evento.actor.usuario} (${evento.actor.rol})`].filter(Boolean).join(" — "),
         desdeDonde: evento.origen,
       }));
 

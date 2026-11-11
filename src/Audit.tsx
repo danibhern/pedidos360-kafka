@@ -94,7 +94,10 @@ export function Audit() {
           <table><thead><tr><th>Pedido</th><th>Fecha</th><th>Evento</th><th>Usuario</th></tr></thead>
             <tbody>{eventos.data.slice(safePage * 50, (safePage + 1) * 50).map(row => <tr key={row.eventId}>
               <td>{row.pedidoId}</td><td>{fecha(row.fecha)}</td>
-              <td>{row.tipo}</td><td>{row.actor.usuario} ({row.actor.rol})</td>
+              <td>{row.tipo}</td>
+              <td>{row.actor.nombre && (<><strong>{row.actor.nombre}</strong><br /></>)}
+                {row.actor.usuario} ({row.actor.rol})
+              </td>
             </tr>)}</tbody></table>
           {!eventos.data.length && <p>No hay eventos para estos filtros.</p>}
         </div>}

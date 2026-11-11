@@ -11,7 +11,12 @@ export type ProductoTop = { productoId: string; unidades: number };
 export type Estado = { estado: string; cantidad: number };
 export type EventoAudit = {
   eventId: string; pedidoId: string; fecha: string; tipo: string;
-  actor: { usuario: string; rol: string }; origen: string;
+  actor: {
+  usuario: string;
+  rol: string;
+  nombre?: string;
+};
+origen: string;
 };
 export type Timeline = {
   fecha: string; tipo: string; quien: string; desdeDonde: string;
