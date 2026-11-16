@@ -16,7 +16,7 @@ x-node: &node
     LAB_CONTROL_SECRET: ${LAB_CONTROL_SECRET:?Ejecuta configurar.cjs}
     ENABLE_LOCAL_LAB: "true"
     HTTP_HOST: 0.0.0.0
-    QUIET_MESSAGES: "1"
+    QUIET_MESSAGES: "0"
     REPORT_URL: http://report:3001
     AUDIT_URL: http://audit:3002
     ZK_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181

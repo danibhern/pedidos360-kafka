@@ -96,6 +96,7 @@ function makeEvent(index) {
     total: precio * cantidad,
     items: [{ productoId, cantidad, precio }],
     actor: {
+      nombre: revision ? 'Juan Pérez' : 'Camila Pérez',
       usuario: revision ? 'operador-carga' : 'cliente-carga',
       rol: revision ? 'OPERADOR' : 'CLIENTE'
     },
